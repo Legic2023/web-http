@@ -32,7 +32,23 @@ public class Main {
             }
         });
 
-        server.addHandler("POST", "/messages", new MyHandler());
+        server.addHandler("GET", "/forms.html", new MyHandler() {
+            public void handle(Request request, BufferedOutputStream responseStream) throws IOException {
+                final var filePath = Path.of(".", "public", request.path);
+                final var mimeType = Files.probeContentType(filePath);
+                final var length = Files.size(filePath);
+
+                System.out.println("Login: " + Request.getQueryParam(request.queryParams, "login"));
+                System.out.println("Password: " + Request.getQueryParam(request.queryParams, "password"));
+
+                outWrite(
+                        "HTTP/1.1 200 OK\r\n" +
+                        "Content-Type: " + mimeType + "\r\n" +
+                        "Content-Length: " + length + "\r\n" +
+                        "Connection: close\r\n" +
+                        "\r\n", responseStream, filePath);
+            }
+        });
 
         server.listenPort(9999);
 
