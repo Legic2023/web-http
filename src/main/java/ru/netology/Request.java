@@ -7,25 +7,27 @@ import java.net.URISyntaxException;
 import java.util.List;
 
 public class Request {
-    String method, path, httpVersion;
-    List<NameValuePair> queryParams;
+    private String method, params, path;
+    private List<NameValuePair> queryParams;
 
-    public Request(String method, String path, String httpVersion, List<NameValuePair> queryParams) {
+    public Request(String method, String params, String path) throws URISyntaxException {
         this.method = method;
+        this.params = params;
         this.path = path;
-        this.httpVersion = httpVersion;
-        this.queryParams = queryParams;
+        this.queryParams = URLEncodedUtils.parse(new URI(params).getQuery(), null);
     }
 
-    public static List<NameValuePair> getQueryParams(String urlString) throws URISyntaxException {
-        URI uri = new URI(urlString);
-        String query = uri.getQuery();
-        return URLEncodedUtils.parse(query, null);
+    public String getPath() {
+        return this.path;
     }
 
-    public static String getQueryParam(List<NameValuePair> queryParams, String name) {
+    public List<NameValuePair> getQueryParams(){
+        return  this.queryParams;
+    }
+
+    public String getQueryParam(String name) {
         NameValuePair queryParam = null;
-        for (NameValuePair param : queryParams) {
+        for (NameValuePair param : this.queryParams) {
             if (name.equals(param.getName())) {
                 queryParam = param;
             }

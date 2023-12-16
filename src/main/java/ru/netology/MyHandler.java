@@ -7,10 +7,10 @@ import java.nio.file.Path;
 
 public class MyHandler {
     public void handle(Request request, BufferedOutputStream responseStream) throws IOException {
-        if ("/".equals(request.path)) {
+        if ("/".equals(request.getPath()) || ("/favicon.ico".equals(request.getPath()))) {
             return;
         }
-        final var filePath = Path.of(".", "public", request.path);
+        final var filePath = Path.of(".", "public", request.getPath());
         final var mimeType = Files.probeContentType(filePath);
         final var length = Files.size(filePath);
         Server.outWrite(

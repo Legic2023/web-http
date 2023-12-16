@@ -14,8 +14,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.regex.Pattern;
 
-import static ru.netology.Request.getQueryParams;
-
 public class Server {
     final List<String> validPaths = List.of("/index.html", "/spring.svg", "/spring.png", "/resources.html", "/styles.css", "/app.js", "/links.html", "/forms.html", "/classic.html", "/events.html", "/events.js");
 
@@ -53,23 +51,21 @@ public class Server {
 
                         final var method = parts[0];
                         final var params = parts[1];
-                        final var httpVersion = parts[2];
+//                        final var httpVersion = parts[2];
 
                         final var pathParamsArr = params.split("\\?");
                         // Находим path
                         final var path = pathParamsArr[0];
-                        // Находим параметры
-                        List<NameValuePair> queryParams = getQueryParams(params);
 
                         // Создаем объект Request
-                        Request request = new Request(method, path, httpVersion, queryParams);
+                        Request request = new Request(method, params, path);
 
                         //Находим нужный хендлер
                         var methodHandlers = myHandlers.get(method);
                         for (String s : methodHandlers.keySet()) {
-                            if (Pattern.matches(s, request.path)) {
+                            if (Pattern.matches(s, request.getPath())) {
                                 methodHandlers.get(s).handle(request, responseStream);
-                            } else if (noValidPathsCheck(request.path)) {
+                            } else if (noValidPathsCheck(request.getPath())) {
                                 outWrite("HTTP/1.1 404 Not Found\r\n" +
                                         "Content-Length: 0\r\n" +
                                         "Connection: close\r\n" +

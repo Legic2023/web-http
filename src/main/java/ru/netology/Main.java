@@ -18,7 +18,7 @@ public class Main {
         // special case for classic
         server.addHandler("GET", "/classic.html", new MyHandler() {
             public void handle(Request request, BufferedOutputStream responseStream) throws IOException {
-                final var filePath = Path.of(".", "public", request.path);
+                final var filePath = Path.of(".", "public", request.getPath());
                 final var mimeType = Files.probeContentType(filePath);
                 final var template = Files.readString(filePath);
                 final var content = template.replace("{time}",
@@ -34,12 +34,12 @@ public class Main {
 
         server.addHandler("GET", "/forms.html", new MyHandler() {
             public void handle(Request request, BufferedOutputStream responseStream) throws IOException {
-                final var filePath = Path.of(".", "public", request.path);
+                final var filePath = Path.of(".", "public", request.getPath());
                 final var mimeType = Files.probeContentType(filePath);
                 final var length = Files.size(filePath);
 
-                System.out.println("Login: " + Request.getQueryParam(request.queryParams, "login"));
-                System.out.println("Password: " + Request.getQueryParam(request.queryParams, "password"));
+                System.out.println("Login: " + request.getQueryParam("login"));
+                System.out.println("Password: " + request.getQueryParam("password"));
 
                 outWrite(
                         "HTTP/1.1 200 OK\r\n" +
